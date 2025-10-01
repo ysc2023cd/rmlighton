@@ -1,0 +1,24 @@
+--cpu=Cortex-M4.fp.sp
+"lighton\startup_stm32f427xx.o"
+"lighton\main.o"
+"lighton\gpio.o"
+"lighton\stm32f4xx_it.o"
+"lighton\stm32f4xx_hal_msp.o"
+"lighton\stm32f4xx_hal_rcc.o"
+"lighton\stm32f4xx_hal_rcc_ex.o"
+"lighton\stm32f4xx_hal_flash.o"
+"lighton\stm32f4xx_hal_flash_ex.o"
+"lighton\stm32f4xx_hal_flash_ramfunc.o"
+"lighton\stm32f4xx_hal_gpio.o"
+"lighton\stm32f4xx_hal_dma_ex.o"
+"lighton\stm32f4xx_hal_dma.o"
+"lighton\stm32f4xx_hal_pwr.o"
+"lighton\stm32f4xx_hal_pwr_ex.o"
+"lighton\stm32f4xx_hal_cortex.o"
+"lighton\stm32f4xx_hal.o"
+"lighton\stm32f4xx_hal_exti.o"
+"lighton\system_stm32f4xx.o"
+--library_type=microlib --strict --scatter "lighton\lighton.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "lighton.map" -o lighton\lighton.axf
