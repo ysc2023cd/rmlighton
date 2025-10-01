@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "tim.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -115,24 +114,23 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_TIM1_Init();
-  HAL_TIM_Base_Start(&htim1);
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
+  HAL_GPIO_WritePin(ledpe11_GPIO_Port,ledpe11_Pin,GPIO_PIN_SET);
+  HAL_GPIO_WritePin(ledpf14_GPIO_Port,ledpf14_Pin,GPIO_PIN_SET);
+  status = 0x01;
   while (1)
   {
-
-    if (__HAL_TIM_GET_COUNTER(&htim1)>5000) {
-      HAL_GPIO_WritePin(ledpe11_GPIO_Port,ledpe11_Pin,GPIO_PIN_RESET);
-    }
-    else {
-      HAL_GPIO_WritePin(ledpe11_GPIO_Port,ledpe11_Pin,GPIO_PIN_SET);
-    }
+    ticks = HAL_GetTick();
+    if (status==0x01) {LEDred();}
+    if (status==0x02) {LEDgreen();}
+   if (readkey()==1) {
+     statusshift();
+   }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
