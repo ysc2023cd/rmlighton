@@ -126,7 +126,7 @@ int main(void)
 
   while (1)
   {
-
+		ticks=1;
     if (__HAL_TIM_GET_COUNTER(&htim1)>5000) {
       HAL_GPIO_WritePin(ledpe11_GPIO_Port,ledpe11_Pin,GPIO_PIN_RESET);
     }
