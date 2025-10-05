@@ -18,6 +18,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
+#include <math.h>
+
 #include "tim.h"
 #include "gpio.h"
 
@@ -56,34 +59,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void LEDred()
-{
-  HAL_GPIO_WritePin(ledpe11_GPIO_Port,ledpe11_Pin,GPIO_PIN_RESET);
-  HAL_Delay(1000);
-  HAL_GPIO_WritePin(ledpe11_GPIO_Port,ledpe11_Pin,GPIO_PIN_SET);
-  HAL_Delay(1000);
-}
 
-void LEDgreen()
-{
-  HAL_GPIO_WritePin(ledpf14_GPIO_Port,ledpf14_Pin,GPIO_PIN_RESET);
-  HAL_Delay(1000);
-  HAL_GPIO_WritePin(ledpf14_GPIO_Port,ledpf14_Pin,GPIO_PIN_SET);
-  HAL_Delay(1000);
-}
-
-void statusshift()
-{
-  if (status==0x01) status=0x02;
-  if (status==0x02) status=0x01;
-}
-
-uint8_t readkey()
-{
-  uint8_t key;
-  key = HAL_GPIO_ReadPin(key_GPIO_Port, key_Pin);
-  return key;
-}
 /* USER CODE END 0 */
 
 /**
@@ -116,23 +92,17 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM1_Init();
-  HAL_TIM_Base_Start(&htim1);
   /* USER CODE BEGIN 2 */
-
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
   while (1)
   {
-		ticks=1;
-    if (__HAL_TIM_GET_COUNTER(&htim1)>5000) {
-      HAL_GPIO_WritePin(ledpe11_GPIO_Port,ledpe11_Pin,GPIO_PIN_RESET);
-    }
-    else {
-      HAL_GPIO_WritePin(ledpe11_GPIO_Port,ledpe11_Pin,GPIO_PIN_SET);
-    }
+    uint32_t arr_value = __HAL_TIM_GetAutoreload(&htim1);
+    uint32_t brightnes = arr_value * sinf(4 * HAL_GetTick() / 1000.f) - 1;
+    __HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_2,brightnes);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
