@@ -18,6 +18,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "iwdg.h"
+#include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -55,34 +58,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void LEDred()
-{
-  HAL_GPIO_WritePin(ledpe11_GPIO_Port,ledpe11_Pin,GPIO_PIN_RESET);
-  HAL_Delay(1000);
-  HAL_GPIO_WritePin(ledpe11_GPIO_Port,ledpe11_Pin,GPIO_PIN_SET);
-  HAL_Delay(1000);
-}
 
-void LEDgreen()
-{
-  HAL_GPIO_WritePin(ledpf14_GPIO_Port,ledpf14_Pin,GPIO_PIN_RESET);
-  HAL_Delay(1000);
-  HAL_GPIO_WritePin(ledpf14_GPIO_Port,ledpf14_Pin,GPIO_PIN_SET);
-  HAL_Delay(1000);
-}
-
-void statusshift()
-{
-  if (status==0x01) status=0x02;
-  if (status==0x02) status=0x01;
-}
-
-uint8_t readkey()
-{
-  uint8_t key;
-  key = HAL_GPIO_ReadPin(key_GPIO_Port, key_Pin);
-  return key;
-}
 /* USER CODE END 0 */
 
 /**
@@ -114,23 +90,20 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_TIM1_Init();
+  MX_IWDG_Init();
+  MX_UART7_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  HAL_GPIO_WritePin(ledpe11_GPIO_Port,ledpe11_Pin,GPIO_PIN_SET);
-  HAL_GPIO_WritePin(ledpf14_GPIO_Port,ledpf14_Pin,GPIO_PIN_SET);
-  status = 0x01;
+  uint8_t tx_msg[] = "RoboMaster";
   while (1)
   {
-    ticks = HAL_GetTick();
-    if (status==0x01) {LEDred();}
-    if (status==0x02) {LEDgreen();}
-   if (readkey()==1) {
-     statusshift();
-   }
+    HAL_UART_Transmit(&huart7,tx_msg,10,1000);
+    HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -155,8 +128,9 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 6;
