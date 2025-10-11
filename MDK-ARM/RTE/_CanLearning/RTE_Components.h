@@ -3,8 +3,8 @@
  * Auto generated Run-Time-Environment Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'lighton' 
- * Target:  'lighton' 
+ * Project: 'CanLearning' 
+ * Target:  'CanLearning' 
  */
 
 #ifndef RTE_COMPONENTS_H

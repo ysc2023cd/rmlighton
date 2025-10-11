@@ -1,15 +1,36 @@
 #include "main.h"
-#include "usart.h"
-#include <cstring>
-
-extern uint8_t rx_msg[4];
-extern uint8_t tx_msg[4];
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+#include "stm32f4xx_hal_can.h"
+#include "stm32f4xx_hal.h"
+#include "can.h"
+#include "tim.h"
+#include "../Inc/M3508_Motor.h"
+extern uint8_t tx_data[8];
+extern CAN_RxHeaderTypeDef rx_header;
+extern CAN_TxHeaderTypeDef tx_header;
+extern uint32_t can_tx_mail_box_;
+extern uint8_t rx_data[8];
+HAL_StatusTypeDef status;
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-    if (huart == &huart7) {
-        memcpy(tx_msg, rx_msg, 3);
-        HAL_UART_Transmit_IT(&huart7, tx_msg, 3);
-        HAL_UART_Receive_IT(&huart7, rx_msg, 3);
+    if (htim->Instance == htim6.Instance)
+    {
+        status=HAL_CAN_AddTxMessage(&hcan1, &tx_header, tx_data, &can_tx_mail_box_);
     }
 }
+
+M3508_Motor Motor(19.2);
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
+{
+    if (hcan->Instance == CAN1)
+    {
+        HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &rx_header, rx_data);
+    }
+    if (rx_header.StdId == 0x204)
+    {
+        Motor.canRxMsgCallback(rx_data);
+    }
+}
+
+
+
+
